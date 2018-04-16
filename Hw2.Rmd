@@ -1,0 +1,143 @@
+---
+title: "Econometrics Hw2"
+author: "Trevor Freeland"
+date: "April 15, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, message = F, warning = F)
+```
+
+```{r}
+library(tidyverse)
+library(pander)
+library(googlesheets)
+food.data <- read.csv("~/R/Econometrics/EconometricsHW2/FoodExpenditures.csv")
+url <- gs_url("https://docs.google.com/spreadsheets/d/163zuhH_nUXtsDfnnrzuDxJOj4D3Ago1ldEA960JZPmE/")
+country.data <- gs_read(url)
+```
+
+##1
+
+###(a)
+
+T-stat = -1.77
+
+P-value = .084
+
+**Conclusion: We cannot reject the null hypothesis.** 
+
+Analysis: Assuming that our scores represent a sample from the population, we could not reject the null hypothesis that the true mean score for part 1 of the exam is 78%. Using a t distribution with 42 degrees of freedom we receive a p-value of .084 from a two-sided t-test. With a standard significance level of .05 we cannot reject the null hypothesis that the true mean is 78%.
+
+```{r}
+null.mu <- .78
+obs.mu <- 33.1/45
+sd <- 7.4/45
+n <- 43
+t.stat <- (obs.mu - null.mu)/(sd/sqrt(n))
+2 * pt(t.stat, df = 42)
+```
+
+###(b)
+
+**99% confidence interval:** Between -.356 and .50
+
+See code below for calculations.
+
+```{r}
+coef <- .073
+sd <- .159
+upper <- coef + qt(.995, df=42)*sd
+lower <- coef - qt(.995, df=42)*sd
+```
+
+##2
+
+###(a)
+
+```{r}
+ggplot(food.data) + geom_point(aes(x = TOTALEXP, y = FOODEXP)) + ggtitle("Total Expenditures vs Food Expenditures") +  ylab("Food Expenditures") +  xlab("Total Expenditures")
+```
+
+###(b)
+
+Looking at the scatterplot above I am slightly worried about the linearity assumption we make in Classical Linear Regression. There appears to be some curvature in the data and so the relationship might not be best described with a linear model. 
+
+###(c)
+
+**Our Model:** Food Expenditures = 94.21 + .44(TotalExp) + $\epsilon$ (Rupees), $\epsilon$~N(0,$66.86^2$)
+
+Our intercept of 94.21 indicates that if someone had 0 Total Expenditures then they would still be expected to have 94.21 in food expenditures, which isn't all that helpful.
+
+Our coefficient on Total Expenditures of .44 indicates that on average, for every 1 rupee increase in total expenditures, we would expect food expenditures to rise by .44 rupees.
+
+See table below for model summary.
+
+```{r}
+food.lm <- lm(FOODEXP~TOTALEXP, data = food.data)
+pander(summary(food.lm))
+```
+
+##3
+
+###(a)
+
+**Our Model:** Life Expectancy = 58.9 + .00069(gdpPercap) + $\epsilon$, $\epsilon$~N(0, $8.95^2$)
+
+Our intercept indicates that if somone was living in a place with 0 gdpPercap, on average they would be expected to live for 58.9 years. 
+
+Our coefficient for gdpPercap indicates that for an increase in gdpPercap of 1000 would lead to an average increase in life expectancy by .69 years.
+
+See table below for model summary.
+
+```{r}
+new.data <- country.data %>% filter(year %in% c(2000:2009))
+country.lm <- lm(lifeExp~gdpPercap, data = new.data)
+pander(summary(country.lm))
+```
+
+###(b)
+
+```{r}
+plot(resid(country.lm)~fitted(country.lm), main = "Residuals against fitted Values", ylab="Residuals", xlab="Fitted Values")
+```
+
+I do have concerns about our model. There appears to be a very clear pattern that for larger fitted values, our residuals consistently get smaller and smaller, which means that our model is missing something and that some of our model assumptions might be wrong. 
+
+##4
+
+My second model that I fit for the data I believe fits the data better. I used the anova command, which compares two nested models, on the two models and my p-value for my anova test is essentailly 0, which indicates that we need to use the larger model. 
+
+```{r, results = 'hide'}
+country.lm2 <- lm(lifeExp~ continent * gdpPercap , data = new.data)
+summary(country.lm2)
+anova(country.lm2, country.lm)
+```
+
+##Challenge Problem
+
+With the color we can see that our model does not do very well for countries in Africa. The model does a bit better for countries in Asia, but not extremely well still. The model then does a fairly good job at predicting for countries in Europe, the Americas, and Oceania. 
+
+```{r}
+new.data$pred <- predict(country.lm2)
+new.data$resid <- resid(country.lm2)
+ggplot(new.data, aes(x = pred, y = resid, color = continent)) +  geom_point() + geom_abline(slope = 0, intercept = 0)
+```
+
+##5
+
+###(a)
+
+###(b)
+
+###(c)
+
+##6
+
+###(a)
+
+###(b)
+
+###(c)
+
