@@ -136,7 +136,7 @@ With the color we can see that our model does not do very well for countries in 
 ```{r}
 new.data$pred <- predict(country.lm2)
 new.data$resid <- resid(country.lm2)
-ggplot(new.data, aes(x = pred, y = resid, color = continent)) +  geom_point() + geom_abline(slope = 0, intercept = 0)
+ggplot(new.data, aes(x = pred, y = resid, color = continent)) +  geom_point() + geom_abline(slope = 0, intercept = 0) + ggtitle("Residuals vs Fitted Values") + ylab("Resiuals") + xlab("Predicted Values")
 ```
 
 ##5
@@ -171,22 +171,22 @@ confint(us.lm)
 
 ```{r}
 filtered.data <- country.data %>% filter(gdpPercap < 55000)
-ggplot(filtered.data, aes(x = year, y = gdpPercap)) + geom_jitter() + ggtitle("Changes in GDP per capita over time") + ylab("GDP Per Capita") + xlab("Year")
+ggplot(filtered.data, aes(x = year, y = log(gdpPercap))) + geom_jitter() + ggtitle("Changes in GDP per capita over time") + ylab("Log of GDP Per Capita") + xlab("Year")
 ```
 
 ###(b)
 
-On Average the GDP per capita grows by \$147.2 per year. See below for model summary and the regression line added to our plot from above. 
+On Average the GDP per capita grows by 1.7% per year. See below for model summary and the regression line added to our plot from above. 
 
 ```{r}
-model1 <- lm(gdpPercap~year, data = filtered.data)
+model1 <- lm(log(gdpPercap)~year, data = filtered.data)
 pander(summary(model1))
-ggplot(filtered.data, aes(x = year, y = gdpPercap)) + geom_jitter() + geom_smooth(method = )+ ggtitle("Changes in GDP per capita over time") + ylab("GDP Per Capita") + xlab("Year")
+ggplot(filtered.data, aes(x = year, y = log(gdpPercap))) + geom_jitter() + geom_smooth(method = )+ ggtitle("Changes in GDP per capita over time") + ylab("GDP Per Capita") + xlab("Year")
 ```
 
 ###(c)
 
-A 95% confidence interval for the growth rate of GDP per capita per year in the US is between \$125.3 and \$169.0.
+A 95% confidence interval for the growth rate of GDP per capita per year in the US is between 1.4% and 2.1%.
 
 ```{r}
 confint(model1)
