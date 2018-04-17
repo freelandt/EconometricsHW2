@@ -107,21 +107,25 @@ I do have concerns about our model. There appears to be a very clear pattern tha
 
 ##4
 
-**relook at this**
+**New Model:** LifeExp = Intercept + ContinentIntercepts + gdpPercap + gdpPercap*Continent + $\epsilon$, $\epsilon$~N(0,$\sigma^2$)
 
-**In light of the two-variable regression extensions described in CH 6 of the textbook, estimate and interpret at least one alternate regression for these data. Which formulation do you think best fits these data? Why?**
+With estimated Coefficients our mode looks like:
+
+LifeExp = 50.7 + 19.3(Americas) + 14.2(Asia) + 21.3(Europe) + 25.1(Oceania) + .001(gdpPercap) + -.0009(Americas:gdpPercap) + -.0007(Asia:gdpPercap) + -.001(Europe:gdpPercap) + -.001(Oceania:gdpPercap) + $\epsilon$, $\epsilon$~N(0,$6.3^2$)
+
+The difference in my model compared to our original model is that we have a different intercept for each continent, and each continent also has a different slope on gdpPercap. For example if we look at a country in the Americas, our expected LifeExp = 50.7 + 19.3 + (.001-.0009 = .0001)(gdpPercap). 
 
 My second model that I made fits the data better. I used the anova command, which compares two nested models, on the two models and my p-value for my anova test is essentailly 0, which indicates that we need to use the larger model, which is the model that I made. 
 
 
-See Table below for model summary
+See Table below for model summary and Anova results
 
 ```{r}
 country.lm2 <- lm(lifeExp~ continent * gdpPercap , data = new.data)
 pander(summary(country.lm2))
 ```
 
-```{r, results='hide'}
+```{r}
 anova(country.lm2, country.lm)
 ```
 
@@ -157,7 +161,7 @@ pander(summary(us.lm))
 
 A 95% confidence interval for the growth rate of GDP per capita per year in the US is between \$479.7 and \$585.4.
 
-```{r, results = 'hide'}
+```{r}
 confint(us.lm)
 ```
 
@@ -172,17 +176,18 @@ ggplot(filtered.data, aes(x = year, y = gdpPercap)) + geom_jitter() + ggtitle("C
 
 ###(b)
 
-On Average the GDP per capita grows by \$147.2 per year. 
+On Average the GDP per capita grows by \$147.2 per year. See below for model summary and the regression line added to our plot from above. 
 
 ```{r}
 model1 <- lm(gdpPercap~year, data = filtered.data)
 pander(summary(model1))
+ggplot(filtered.data, aes(x = year, y = gdpPercap)) + geom_jitter() + geom_smooth(method = )+ ggtitle("Changes in GDP per capita over time") + ylab("GDP Per Capita") + xlab("Year")
 ```
 
 ###(c)
 
 A 95% confidence interval for the growth rate of GDP per capita per year in the US is between \$125.3 and \$169.0.
 
-```{r, results = 'hide'}
+```{r}
 confint(model1)
 ```
