@@ -107,11 +107,17 @@ I do have concerns about our model. There appears to be a very clear pattern tha
 
 ##4
 
-My second model that I fit for the data I believe fits the data better. I used the anova command, which compares two nested models, on the two models and my p-value for my anova test is essentailly 0, which indicates that we need to use the larger model. 
+My second model that I made fits the data better. I used the anova command, which compares two nested models, on the two models and my p-value for my anova test is essentailly 0, which indicates that we need to use the larger model, which is the model that I made. 
 
-```{r, results = 'hide'}
+
+See Table below for model summary
+
+```{r}
 country.lm2 <- lm(lifeExp~ continent * gdpPercap , data = new.data)
-summary(country.lm2)
+pander(summary(country.lm2))
+```
+
+```{r, results='hide'}
 anova(country.lm2, country.lm)
 ```
 
@@ -129,15 +135,50 @@ ggplot(new.data, aes(x = pred, y = resid, color = continent)) +  geom_point() + 
 
 ###(a)
 
+```{r}
+us.data <- country.data %>% filter(country == "United States")
+ggplot(us.data) + geom_point(aes(x = year, y = gdpPercap)) + ggtitle("Changes in US GDP per capita over time") + ylab("GDP Per Capita") + xlab("Year")
+```
+
 ###(b)
 
+On Average the GDP per capita in the US grew by \$533 per year. 
+
+```{r}
+us.lm <- lm(gdpPercap~year, data = us.data)
+pander(summary(us.lm))
+```
+
 ###(c)
+
+A 95% confidence interval for the growth rate of GDP per capita per year in the US is between \$479.7 and \$585.4.
+
+```{r, results = 'hide'}
+confint(us.lm)
+```
 
 ##6
 
 ###(a)
 
+```{r}
+filtered.data <- country.data %>% filter(gdpPercap < 55000)
+ggplot(filtered.data, aes(x = year, y = gdpPercap)) + geom_jitter() + ggtitle("Changes in GDP per capita over time") + ylab("GDP Per Capita") + xlab("Year")
+```
+
 ###(b)
+
+On Average the GDP per capita grows by \$147.2 per year. 
+
+```{r}
+model1 <- lm(gdpPercap~year, data = filtered.data)
+pander(summary(model1))
+```
 
 ###(c)
 
+A 95% confidence interval for the growth rate of GDP per capita per year in the US is between \$125.3 and \$169.0.
+
+```{r, results = 'hide'}
+confint(model1)
+```
