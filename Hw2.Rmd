@@ -107,6 +107,10 @@ I do have concerns about our model. There appears to be a very clear pattern tha
 
 ##4
 
+**relook at this**
+
+**In light of the two-variable regression extensions described in CH 6 of the textbook, estimate and interpret at least one alternate regression for these data. Which formulation do you think best fits these data? Why?**
+
 My second model that I made fits the data better. I used the anova command, which compares two nested models, on the two models and my p-value for my anova test is essentailly 0, which indicates that we need to use the larger model, which is the model that I made. 
 
 
