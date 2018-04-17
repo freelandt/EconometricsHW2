@@ -9,7 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE, comment = NA, message = F, warning = F)
 ```
 
-```{r}
+```{r, include=F}
 library(tidyverse)
 library(pander)
 library(googlesheets)
@@ -122,6 +122,7 @@ See Table below for model summary and Anova results
 
 ```{r}
 country.lm2 <- lm(lifeExp~ continent * gdpPercap , data = new.data)
+country.lm3 <- lm(lifeExp~log(gdpPercap), data = new.data)
 pander(summary(country.lm2))
 ```
 
